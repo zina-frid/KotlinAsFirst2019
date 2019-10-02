@@ -264,16 +264,11 @@ fun cos(x: Double, eps: Double): Double {
  * Использовать операции со строками в этой задаче запрещается.
  */
 fun revert(n: Int): Int {
-    var count = 0
+    var count = digitNumber(n)
     var sum = 0
     var number = n
-    var length = n
     var last: Int
     var digit = 0
-    while (length % 10 > 0) {
-        count += 1
-        length /= 10
-    }
     for (i in 1..count) {
         digit += 1
         last = number % 10
