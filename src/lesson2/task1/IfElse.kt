@@ -66,7 +66,7 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
 fun ageDescription(age: Int): String = when {
-    age % 10 >= 5 || (age % 100 in 10..19) -> "$age лет"
+    age % 10 >= 5 || (age % 100 in 10..19) || age % 10 == 0 -> "$age лет"
     age % 10 == 1 && age % 100 != 11 -> "$age год"
     else -> "$age года"
 }
@@ -105,13 +105,11 @@ fun whichRookThreatens(
     kingX: Int, kingY: Int,
     rookX1: Int, rookY1: Int,
     rookX2: Int, rookY2: Int
-): Int {
-    return when {
-        (kingX == rookX1 || kingY == rookY1) && (kingX == rookX2 || kingY == rookY2) -> 3
-        (kingX == rookX2 || kingY == rookY2) -> 2
-        (kingX == rookX1 || kingY == rookY1) -> 1
-        else -> 0
-    }
+): Int = when {
+    (kingX == rookX1 || kingY == rookY1) && (kingX == rookX2 || kingY == rookY2) -> 3
+    (kingX == rookX2 || kingY == rookY2) -> 2
+    (kingX == rookX1 || kingY == rookY1) -> 1
+    else -> 0
 }
 
 /**
@@ -128,14 +126,11 @@ fun rookOrBishopThreatens(
     kingX: Int, kingY: Int,
     rookX: Int, rookY: Int,
     bishopX: Int, bishopY: Int
-): Int {
-    return when {
-        (kingX == rookX || kingY == rookY) && abs(kingX - bishopX) == abs(kingY - bishopY) -> 3
-        abs(kingX - bishopX) == abs(kingY - bishopY) && (kingX != rookX && kingY != rookY) -> 2
-        (kingX == rookX || kingY == rookY) && abs(kingX - bishopX) != abs(kingY - bishopY) -> 1
-        else -> 0
-
-    }
+): Int = when {
+    (kingX == rookX || kingY == rookY) && abs(kingX - bishopX) == abs(kingY - bishopY) -> 3
+    abs(kingX - bishopX) == abs(kingY - bishopY) && (kingX != rookX && kingY != rookY) -> 2
+    (kingX == rookX || kingY == rookY) && abs(kingX - bishopX) != abs(kingY - bishopY) -> 1
+    else -> 0
 }
 
 /**
@@ -147,16 +142,16 @@ fun rookOrBishopThreatens(
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    val maxSide: Double
+    val maxSide = maxOf(a, b, c)
     val secondSide: Double
     val thirdSide: Double
     if (a + b > c && a + c > b && b + c > a) {
-        if (a >= b && a >= c) {
-            maxSide = a; secondSide = b; thirdSide = c
-        } else if (b >= a && b >= c) {
-            maxSide = b; secondSide = a; thirdSide = c
+        if (maxSide == a) {
+            secondSide = b; thirdSide = c
+        } else if (maxSide == b) {
+            secondSide = a; thirdSide = c
         } else {
-            maxSide = c; secondSide = b; thirdSide = a
+            secondSide = b; thirdSide = a
         }
         return when {
             (sqr(maxSide) < sqr(secondSide) + sqr(thirdSide)) -> 0
@@ -177,11 +172,10 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
     return when {
-        (b < d && a < c && b > c) -> b - c
-        (b < d && a > c) -> b - a
-        (b > d && a < c) -> d - c
-        (b > d && a > c && a < d) -> d - a
-        (a == d || b == c) -> 0
+        (b <= d && a <= c && b >= c) -> b - c
+        (b <= d && a >= c) -> b - a
+        (b >= d && a <= c) -> d - c
+        (b >= d && a >= c && a <= d) -> d - a
         else -> -1
     }
 }
