@@ -303,13 +303,12 @@ fun hasDifferentDigits(n: Int): Boolean {
     var y = n
     while (y > 9) {
         a = (y / 10) % 10
-        if (a != last) {
-            break
-        } else {
+        if (a != last) return true
+        else {
             y /= 10
         }
     }
-    return !((n <= 9) || a == last)
+    return false
 }
 
 /**
