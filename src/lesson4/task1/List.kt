@@ -2,6 +2,7 @@
 
 package lesson4.task1
 
+import kotlinx.html.attributesMapOf
 import lesson1.task1.discriminant
 import lesson3.task1.isPrime
 import kotlin.math.abs
@@ -360,4 +361,42 @@ fun roman(n: Int): String {
  * Например, 375 = "триста семьдесят пять",
  * 23964 = "двадцать три тысячи девятьсот шестьдесят четыре"
  */
-fun russian(n: Int): String = TODO()
+fun russian(n: Int): String {
+    val numbers = mapOf(
+        1 to "один", 2 to "два", 3 to "три", 4 to "четыре", 5 to "пять",
+        6 to "шесть", 7 to "семь", 8 to "восемь", 9 to "девять",
+        10 to "десять", 11 to "одиннадцать", 12 to "двенадцать", 13 to "тринадцать", 14 to "четырнадцать",
+        15 to "пятнадцать", 16 to "шестнадцать", 17 to "семнадцать", 18 to "восемнадцать", 19 to "девятнадцать",
+        20 to "двадцать", 30 to "тридцать", 40 to "сорок", 50 to "пятьдесят",
+        60 to "шестьдесят", 70 to "семьдесят", 80 to "восемьдесят", 90 to "девяносто",
+        100 to "сто", 200 to "двести", 300 to "триста", 400 to "четыреста", 500 to "пятьсот",
+        600 to "шестьсот", 700 to "семьсот", 800 to "восемьсот", 900 to "девятьсот"
+    )
+    var three = n / 1000
+    val result = mutableListOf<String>()
+    for (i in 0..1) {
+        result.add(numbers[three / 100 * 100].toString())
+        if (three % 100 in 3..19) result.add(numbers[three % 100].toString())
+        else if (three % 10 in 1..2 && three % 100 / 10 != 1 && i == 0 && n / 1000 != 0) {
+            result.add(numbers[three % 100 / 10 * 10].toString())
+            when {
+                three % 10 == 1 -> result.add("одна")
+                else -> result.add("две")
+            }
+        } else {
+            result.add(numbers[three % 100 / 10 * 10].toString()); result.add(numbers[three % 10].toString())
+        }
+        if (i == 0 && n / 1000 != 0) {
+            when {
+                n / 1000 % 100 / 10 != 1 && n / 1000 % 10 == 1 -> result.add("тысяча")
+                n / 1000 % 100 / 10 != 1 && n / 1000 % 10 in 2..4 -> result.add("тысячи")
+                else -> result.add("тысяч")
+            }
+        }
+        three = n % 1000
+    }
+    while ("null" in result) {
+        result.removeAt(result.indexOf("null"))
+    }
+    return result.joinToString(separator = " ")
+}
