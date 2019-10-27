@@ -285,7 +285,14 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  * Например:
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
-fun hasAnagrams(words: List<String>): Boolean = TODO()
+fun hasAnagrams(words: List<String>): Boolean {
+    for (word1 in 0 until words.size) {
+        for (word2 in word1 + 1 until words.size) {
+            if (words[word1].toSet() == words[word2].toSet()) return true
+        }
+    }
+    return false
+}
 
 /**
  * Сложная
@@ -311,7 +318,20 @@ fun hasAnagrams(words: List<String>): Boolean = TODO()
  *          "Mikhail" to setOf("Sveta", "Marat")
  *        )
  */
-fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> = TODO()
+fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
+    val result = mutableMapOf<String, Set<String>>()
+    for ((name, hands) in friends) {
+        if (name !in result) result[name] = hands.toMutableSet()
+    }
+    for ((name, hands) in friends) {
+        for (person in hands) {
+            if (person !in result) result[person] = mutableSetOf()
+            else result[name] = result[name]!! + result[person]!! - name
+
+        }
+    }
+    return result
+}
 
 /**
  * Сложная
