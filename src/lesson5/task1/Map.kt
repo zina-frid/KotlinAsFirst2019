@@ -92,9 +92,9 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
  *     -> mapOf(5 to listOf("Семён", "Михаил"), 3 to listOf("Марат"))
  */
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
-    val result = mutableMapOf<Int, List<String>>()
+    val result = mutableMapOf<Int, MutableList<String>>()
     for ((student, mark) in grades) {
-        result[mark] = result.getOrDefault(mark, listOf()) + student
+        result.getOrPut(mark) { mutableListOf<String>() }.add(student)
     }
     return result
 }
@@ -143,7 +143,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().intersect(b.toSet()).toList()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().intersect(b).toList()
 
 
 /**
@@ -228,8 +228,9 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    for (i in word.toLowerCase().toSet()) {
-        if (i !in chars) return false
+    val charsRe = chars.toString().toLowerCase().toSet()
+    for (i in word.toLowerCase()) {
+        if (i !in charsRe) return false
     }
     return true
 }
@@ -251,7 +252,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
     for (i in list) {
         map[i] = (map[i] ?: 0) + 1
     }
-    return map.filter { it.value > 1 }
+    return map.filterValues { it > 1 }
 }
 
 /**
@@ -264,7 +265,7 @@ fun extractRepeats(list: List<String>): Map<String, Int> {
  *   hasAnagrams(listOf("тор", "свет", "рот")) -> true
  */
 fun hasAnagrams(words: List<String>): Boolean {
-    val extraList = mutableListOf<List<Char>>()
+    val extraList = mutableSetOf<List<Char>>()
     for (word in words) {
         val letters = word.toList().sorted()
         if (letters in extraList) return true
