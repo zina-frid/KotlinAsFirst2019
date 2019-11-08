@@ -227,11 +227,19 @@ class Tests {
                 "печенье"
             )
         )
+        assertEquals(
+            "",
+            findCheapestStuff(
+                mapOf("" to ("" to 0.0)),
+                ""
+            )
+        )
     }
 
     @Test
     @Tag("Normal")
     fun canBuildFrom() {
+        assertTrue(canBuildFrom(listOf('p'), "p"))
         assertFalse(canBuildFrom(emptyList(), "foo"))
         assertTrue(canBuildFrom(listOf('a', 'b', 'o'), "baobab"))
         assertFalse(canBuildFrom(listOf('a', 'm', 'r'), "Marat"))
@@ -252,6 +260,10 @@ class Tests {
             emptyMap<String, Int>(),
             extractRepeats(listOf("a", "b", "c"))
         )
+        assertEquals(
+            mapOf("" to 2),
+            extractRepeats(listOf("", ""))
+        )
     }
 
     @Test
@@ -260,6 +272,7 @@ class Tests {
         assertFalse(hasAnagrams(emptyList()))
         assertTrue(hasAnagrams(listOf("рот", "свет", "тор")))
         assertFalse(hasAnagrams(listOf("рот", "свет", "код", "дверь")))
+        assertFalse(hasAnagrams(listOf("рот", "свет", "код", "ротор")))
     }
 
     @Test
@@ -289,6 +302,24 @@ class Tests {
                     "Marat" to setOf("Mikhail", "Sveta"),
                     "Sveta" to setOf("Marat"),
                     "Mikhail" to setOf("Sveta")
+                )
+            )
+        )
+        assertEquals(
+            mapOf(
+                "2" to setOf(),
+                "3" to setOf("1", "5"),
+                "1" to setOf("5", "0", "2", "3"),
+                "0" to setOf(),
+                "5" to setOf("0", "2", "1", "3")
+            ),
+            propagateHandshakes(
+                mapOf(
+                    "2" to setOf(),
+                    "3" to setOf("1"),
+                    "1" to setOf("5"),
+                    "0" to setOf(),
+                    "5" to setOf("0", "2", "1", "3")
                 )
             )
         )

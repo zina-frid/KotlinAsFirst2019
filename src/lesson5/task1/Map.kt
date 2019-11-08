@@ -94,7 +94,7 @@ fun buildWordSet(text: List<String>): MutableSet<String> {
 fun buildGrades(grades: Map<String, Int>): Map<Int, List<String>> {
     val result = mutableMapOf<Int, MutableList<String>>()
     for ((student, mark) in grades) {
-        result.getOrPut(mark) { mutableListOf<String>() }.add(student)
+        result.getOrPut(mark) { mutableListOf() }.add(student)
     }
     return result
 }
@@ -143,7 +143,7 @@ fun subtractOf(a: MutableMap<String, String>, b: Map<String, String>) {
  * В выходном списке не должно быть повторяюихся элементов,
  * т. е. whoAreInBoth(listOf("Марат", "Семён, "Марат"), listOf("Марат", "Марат")) == listOf("Марат")
  */
-fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().intersect(b).toList()
+fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.intersect(b).toList()
 
 
 /**
@@ -166,8 +166,7 @@ fun whoAreInBoth(a: List<String>, b: List<String>): List<String> = a.toSet().int
 fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<String, String> {
     val result = mapA.toMutableMap()
     for ((key, value) in mapB) {
-        if (key !in result) result[key] = value
-        else if (key in result && value != result[key]) result[key] = result[key]!! + ", " + value
+        result.merge(key, value) { valueA, valueB -> if (valueA == valueB) valueA else "$valueA, $valueB" }
     }
     return result
 }
@@ -183,9 +182,9 @@ fun mergePhoneBooks(mapA: Map<String, String>, mapB: Map<String, String>): Map<S
  *     -> mapOf("MSFT" to 150.0, "NFLX" to 40.0)
  */
 fun averageStockPrice(stockPrices: List<Pair<String, Double>>): Map<String, Double> {
-    val result = mutableMapOf<String, List<Double>>()
+    val result = mutableMapOf<String, MutableList<Double>>()
     for ((first, second) in stockPrices) {
-        result[first] = result.getOrDefault(first, listOf()) + second
+        result.getOrPut(first) { mutableListOf() }.add(second)
 
     }
     return result.mapValues { it.value.sum() / it.value.size }
@@ -228,7 +227,7 @@ fun findCheapestStuff(stuff: Map<String, Pair<String, Double>>, kind: String): S
  *   canBuildFrom(listOf('a', 'b', 'o'), "baobab") -> true
  */
 fun canBuildFrom(chars: List<Char>, word: String): Boolean {
-    val charsRe = chars.toString().toLowerCase().toSet()
+    val charsRe = chars.map { it.toLowerCase() }.toSet()
     for (i in word.toLowerCase()) {
         if (i !in charsRe) return false
     }
@@ -299,16 +298,19 @@ fun hasAnagrams(words: List<String>): Boolean {
  *        )
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
-    val result = mutableMapOf<String, Set<String>>()
+    val result = mutableMapOf<String, MutableSet<String>>()
     for ((name, hands) in friends) {
         result[name] = hands.toMutableSet()
     }
     for ((name, hands) in friends) {
         for (person in hands) {
             if (person !in result) result[person] = mutableSetOf()
-            else result[name] = result[name]!! + result[person]!! - name
-
+            else result[name]!!.addAll(result[person]!!)
         }
+    }
+
+    for ((name, hands) in result) {
+        result[name] = hands.filter { it != name }.toMutableSet()
     }
     return result
 }

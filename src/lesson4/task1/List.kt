@@ -160,7 +160,8 @@ fun times(a: List<Int>, b: List<Int>): Int = a.zip(b) { ai, bi -> ai * bi }.sum(
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0 при любом x.
  */
-fun polynom(p: List<Int>, x: Int): Int = p.mapIndexed{ index, pIndex -> pIndex * x.toDouble().pow(index).toInt() }.sum()
+fun polynom(p: List<Int>, x: Int): Int =
+    p.mapIndexed { index, pIndex -> pIndex * x.toDouble().pow(index).toInt() }.sum()
 
 
 /**
