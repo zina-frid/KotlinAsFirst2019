@@ -71,7 +71,22 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val monthNames = listOf(
+        "января", "февраля", "марта", "апреля", "мая", "июня",
+        "июля", "августа", "сентября", "октября", "ноября", "декабря"
+    )
+    val date = str.split(" ")
+    if (date.size != 3) return ""
+    val day = date[0].toIntOrNull()
+    val month = monthNames.indexOf(date[1]) + 1
+    val year = date[2].toInt()
+    if (day != null) {
+        if (day > daysInMonth(month, year) || day < 1) return ""
+    }
+    if (year == 0 || date[1] !in monthNames) return ""
+    return String.format("%02d.%02d.%d", day, month, year)
+}
 
 /**
  * Средняя
@@ -83,7 +98,21 @@ fun dateStrToDigit(str: String): String = TODO()
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30 февраля 2009) считается неверными
  * входными данными.
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val monthNames = listOf(
+        "января", "февраля", "марта", "апреля", "мая", "июня",
+        "июля", "августа", "сентября", "октября", "ноября", "декабря"
+    )
+    val date = digital.split(".")
+    if (date.size != 3) return ""
+    val day = date[0].toIntOrNull()
+    val month = date[1].toIntOrNull()
+    val year = date[2].toIntOrNull()
+    if (year == null || year < 0 || month == null || month !in 1..12
+        || day == null || day !in 1..daysInMonth(month, year)
+    ) return ""
+    return "$day ${monthNames[month - 1]} $year"
+}
 
 /**
  * Средняя
@@ -99,7 +128,20 @@ fun dateDigitToStr(digital: String): String = TODO()
  *
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val result = mutableListOf<Char>()
+    val legal = setOf(' ', '-', '(', ')')
+    for (i in phone) {
+        if (i in legal || i in '0'..'9' || (i == '+' && phone.indexOf('+') == 0)) result.add(i)
+        else return ""
+    }
+    if ('(' in result || ')' in result) {
+        if (phone.indexOf('(') + 1 < phone.indexOf(')')) {
+            result.remove('('); result.remove(')')
+        } else return ""
+    }
+    return result.filter { it !in legal }.joinToString(separator = "")
+}
 
 /**
  * Средняя
@@ -111,7 +153,18 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    val result = mutableListOf<Int>()
+    for (i in jumps) {
+        if (i != '-' && i != '%' && i != ' ' && i !in '0'..'9') return -1
+    }
+    val splitJumps = jumps.split(" ")
+    for (i in splitJumps) {
+        val number = i.toIntOrNull()
+        if (number != null) result.add(number)
+    }
+    return result.max() ?: -1
+}
 
 /**
  * Сложная
@@ -124,7 +177,17 @@ fun bestLongJump(jumps: String): Int = TODO()
  * При нарушении формата входной строки, а также в случае отсутствия удачных попыток,
  * вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    val result = mutableListOf<Int>()
+    for (i in jumps) {
+        if (i != '-' && i != '%' && i != ' ' && i != '+' && i !in '0'..'9') return -1
+    }
+    val splitJumps = jumps.split(" ")
+    for (i in 0 until splitJumps.size / 2) {
+        if (splitJumps[2 * i + 1].contains('+')) result.add(splitJumps[i * 2].toInt())
+    }
+    return result.max() ?: -1
+}
 
 /**
  * Сложная
