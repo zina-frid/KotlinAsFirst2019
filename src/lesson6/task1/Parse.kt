@@ -84,7 +84,7 @@ fun dateStrToDigit(str: String): String {
     if (day != null) {
         if (day > daysInMonth(month, year) || day < 1) return ""
     }
-    if (year == 0 || date[1] !in monthNames) return ""
+    if (year < 0 || date[1] !in monthNames) return ""
     return String.format("%02d.%02d.%d", day, month, year)
 }
 

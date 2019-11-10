@@ -302,13 +302,14 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
     for ((name, hands) in friends) {
         result[name] = hands.toMutableSet()
     }
-    for ((name, hands) in friends) {
-        for (person in hands) {
-            if (person !in result) result[person] = mutableSetOf()
-            else result[name]!!.addAll(result[person]!!)
+    for (i in 0 until friends.size / 2) {
+        for ((name, hands) in friends) {
+            for (person in hands) {
+                if (person !in result) result[person] = mutableSetOf()
+                else result[name]!!.addAll(result[person]!!)
+            }
         }
     }
-
     for ((name, hands) in result) {
         result[name] = hands.filter { it != name }.toMutableSet()
     }
