@@ -71,20 +71,19 @@ fun main() {
  * Обратите внимание: некорректная с точки зрения календаря дата (например, 30.02.2009) считается неверными
  * входными данными.
  */
+val monthNames = listOf(
+    "января", "февраля", "марта", "апреля", "мая", "июня",
+    "июля", "августа", "сентября", "октября", "ноября", "декабря"
+)
+
 fun dateStrToDigit(str: String): String {
-    val monthNames = listOf(
-        "января", "февраля", "марта", "апреля", "мая", "июня",
-        "июля", "августа", "сентября", "октября", "ноября", "декабря"
-    )
     val date = str.split(" ")
     if (date.size != 3) return ""
     val day = date[0].toIntOrNull()
-    val month = monthNames.indexOf(date[1]) + 1
-    val year = date[2].toInt()
-    if (day != null) {
-        if (day > daysInMonth(month, year) || day < 1) return ""
-    }
-    if (year < 0 || date[1] !in monthNames) return ""
+    val month: Int
+    if (date[1] in monthNames) month = monthNames.indexOf(date[1]) + 1 else return ""
+    val year = date[2].toIntOrNull()
+    if (day == null || year == null || day > daysInMonth(month, year) || day < 1 || year < 0) return ""
     return String.format("%02d.%02d.%d", day, month, year)
 }
 
@@ -99,10 +98,6 @@ fun dateStrToDigit(str: String): String {
  * входными данными.
  */
 fun dateDigitToStr(digital: String): String {
-    val monthNames = listOf(
-        "января", "февраля", "марта", "апреля", "мая", "июня",
-        "июля", "августа", "сентября", "октября", "ноября", "декабря"
-    )
     val date = digital.split(".")
     if (date.size != 3) return ""
     val day = date[0].toIntOrNull()
@@ -130,17 +125,10 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String {
     val result = mutableListOf<Char>()
-    val legal = setOf(' ', '-', '(', ')')
-    for (i in phone) {
-        if (i in legal || i in '0'..'9' || (i == '+' && phone.indexOf('+') == 0)) result.add(i)
-        else return ""
-    }
-    if ('(' in result || ')' in result) {
-        if (phone.indexOf('(') + 1 < phone.indexOf(')')) {
-            result.remove('('); result.remove(')')
-        } else return ""
-    }
-    return result.filter { it !in legal }.joinToString(separator = "")
+    val regex = Regex("""^\+?\s*\d*\s*(\([ 0-9-]+\))?[ 0-9-]*$""")
+    if (!phone.contains(regex)) return ""
+    if (phone[0] == '+') result.add('+')
+    return Regex("""[-() ]""").split(phone).joinToString(separator = "")
 }
 
 /**
@@ -154,16 +142,9 @@ fun flattenPhoneNumber(phone: String): String {
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
 fun bestLongJump(jumps: String): Int {
-    val result = mutableListOf<Int>()
-    for (i in jumps) {
-        if (i != '-' && i != '%' && i != ' ' && i !in '0'..'9') return -1
-    }
-    val splitJumps = jumps.split(" ")
-    for (i in splitJumps) {
-        val number = i.toIntOrNull()
-        if (number != null) result.add(number)
-    }
-    return result.max() ?: -1
+    if (!jumps.matches(Regex("""((\d+|%|-)\s)*(\d+|%|-)"""))) return -1
+    val result = Regex("""\d+""").findAll(jumps)
+    return result.map { it.value.toInt() }.max() ?: -1
 }
 
 /**
@@ -178,15 +159,9 @@ fun bestLongJump(jumps: String): Int {
  * вернуть -1.
  */
 fun bestHighJump(jumps: String): Int {
-    val result = mutableListOf<Int>()
-    for (i in jumps) {
-        if (i != '-' && i != '%' && i != ' ' && i != '+' && i !in '0'..'9') return -1
-    }
-    val splitJumps = jumps.split(" ")
-    for (i in 0 until splitJumps.size / 2) {
-        if (splitJumps[2 * i + 1].contains('+')) result.add(splitJumps[i * 2].toInt())
-    }
-    return result.max() ?: -1
+    if (!jumps.matches(Regex("""((\d+\s)[+\-%]+\s)*((\d+\s)[+\-%]+)+"""))) return -1
+    val result = Regex("""(\d+\s\+)""").findAll(jumps.replace(Regex("""[\-%]"""), ""))
+    return result.map { it.value.filter { it2 -> (it2 in '0'..'9') } }.map { it.toInt() }.max() ?: -1
 }
 
 /**
@@ -198,7 +173,15 @@ fun bestHighJump(jumps: String): Int {
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    if (!expression.matches(Regex("""(\d+\s[-+]\s)*\d+"""))) throw IllegalArgumentException(expression)
+    val expres = expression.split(" ").toList()
+    var result = expres[0].toInt()
+    for (i in 1 until expres.size - 1 step 2) {
+        if (expres[i] == "-") result -= expres[i + 1].toInt() else result += expres[i + 1].toInt()
+    }
+    return result
+}
 
 /**
  * Сложная
