@@ -124,11 +124,9 @@ fun dateDigitToStr(digital: String): String {
  * PS: Дополнительные примеры работы функции можно посмотреть в соответствующих тестах.
  */
 fun flattenPhoneNumber(phone: String): String {
-    val result = mutableListOf<Char>()
-    val regex = Regex("""^\+?\s*\d*\s*(\([ 0-9-]+\))?[ 0-9-]*$""")
-    if (!phone.contains(regex)) return ""
-    if (phone[0] == '+') result.add('+')
-    return Regex("""[-() ]""").split(phone).joinToString(separator = "")
+    val regex = phone.replace(Regex("""[\- ]"""), "")
+    if (!regex.matches(Regex("""\+?\d*(\([0-9]+\))?[0-9]*"""))) return ""
+    return regex.filter { it in '0'..'9' || it == '+' }
 }
 
 /**
@@ -144,7 +142,7 @@ fun flattenPhoneNumber(phone: String): String {
 fun bestLongJump(jumps: String): Int {
     if (!jumps.matches(Regex("""((\d+|%|-)\s)*(\d+|%|-)"""))) return -1
     val result = Regex("""\d+""").findAll(jumps)
-    return result.map { it.value.toInt() }.max() ?: -1
+    return result.map { it.value.filter { it2 -> (it2 in '0'..'9') } }.map { it.toInt() }.max() ?: -1
 }
 
 /**
@@ -192,7 +190,19 @@ fun plusMinus(expression: String): Int {
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    val reStr = str.split(" ").map { it.toLowerCase() }
+    var index = 0
+    var previous = reStr[0]
+    for (i in 1 until reStr.size) {
+        if (previous == reStr[i]) return index
+        else {
+            index += previous.length + 1
+            previous = reStr[i]
+        }
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -205,7 +215,18 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть больше либо равны нуля.
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    if (!description.matches(Regex("""((\S+\s(\d+(.\d+)?));\s)*(\S+\s(\d+(.\d+)?))"""))) return ""
+    val result = mutableMapOf<Double, String>()
+    val list = mutableListOf<Double>()
+    for (str in description.split("; ")) {
+        val current = str.split(" ")
+        result[current[1].toDouble()] = current[0]
+        list.add(current[1].toDouble())
+    }
+    val maxCount = list.max()
+    return result[maxCount]!!
+}
 
 /**
  * Сложная
