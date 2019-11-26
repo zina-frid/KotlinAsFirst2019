@@ -57,8 +57,9 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
 fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
     val result = mutableMapOf<String, Int>()
     val text = File(inputName).readText().toLowerCase()
-    for (str in substrings) result[str] = 0
-    for (str in substrings) {
+    val set = substrings.toSet()
+    for (str in set) result[str] = 0
+    for (str in set) {
         var i = text.indexOf(str.toLowerCase())
         while (i > -1) {
             result[str] = result[str]!! + 1
@@ -88,7 +89,7 @@ fun sibilants(inputName: String, outputName: String) {
     val text = File(inputName).readText()
     val result = StringBuilder()
     for (i in 0 until text.length) {
-        if (text[i] in right && text[i - 1] in letters) result.append(right[text[i]])
+        if (i > 0 && text[i] in right && text[i - 1] in letters) result.append(right[text[i]])
         else result.append(text[i])
     }
     File(outputName).writeText(result.toString())
