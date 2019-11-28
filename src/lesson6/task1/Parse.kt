@@ -141,8 +141,8 @@ fun flattenPhoneNumber(phone: String): String {
  */
 fun bestLongJump(jumps: String): Int {
     if (!jumps.matches(Regex("""((\d+|%|-)\s)*(\d+|%|-)"""))) return -1
-    val result = Regex("""\d+""").findAll(jumps)
-    return result.map { it.value.filter { it2 -> (it2 in '0'..'9') } }.map { it.toInt() }.max() ?: -1
+    val result = Regex("""\d+""").findAll(jumps).toList()
+    return result.map { it.value.toInt() }.max() ?: -1
 }
 
 /**
@@ -217,15 +217,16 @@ fun firstDuplicateIndex(str: String): Int {
  */
 fun mostExpensive(description: String): String {
     if (!description.matches(Regex("""((\S+\s(\d+(.\d+)?));\s)*(\S+\s(\d+(.\d+)?))"""))) return ""
-    val result = mutableMapOf<Double, String>()
-    val list = mutableListOf<Double>()
+    var maxCount = 0.0
+    var maxName = ""
     for (str in description.split("; ")) {
         val current = str.split(" ")
-        result[current[1].toDouble()] = current[0]
-        list.add(current[1].toDouble())
+        if (current[1].toDouble() > maxCount) {
+            maxCount = current[1].toDouble()
+            maxName = current[0]
+        }
     }
-    val maxCount = list.max()
-    return result[maxCount]!!
+    return maxName
 }
 
 /**

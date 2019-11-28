@@ -2,7 +2,7 @@
 
 package lesson5.task1
 
-import lesson1.task1.sqr
+import java.lang.Math.sqrt
 
 /**
  * Пример
@@ -304,7 +304,7 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
     for ((name, hands) in friends) {
         result[name] = hands.toMutableSet()
     }
-    for (i in 0 until sqr(friends.size)) {
+    for (i in 0 until sqrt(friends.size.toDouble()).toInt()) {
         for ((name, hands) in friends) {
             for (person in hands) {
                 if (person !in result) result[person] = mutableSetOf()
@@ -313,7 +313,8 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         }
     }
     for ((name, hands) in result) {
-        result[name] = hands.filter { it != name }.toMutableSet()
+        hands.remove(name)
+
     }
     return result
 }
