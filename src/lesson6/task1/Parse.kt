@@ -125,7 +125,7 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String {
     val regex = phone.replace(Regex("""[\- ]"""), "")
-    if (!regex.matches(Regex("""\+?\d+(\([0-9]+\))?[0-9]*"""))) return ""
+    if (!regex.matches(Regex("""(\+\d+)?(\(\d+\))?\d*"""))) return ""
     return regex.filter { it in '0'..'9' || it == '+' }
 }
 
@@ -158,8 +158,8 @@ fun bestLongJump(jumps: String): Int {
  */
 fun bestHighJump(jumps: String): Int {
     if (!jumps.matches(Regex("""((\d+\s)[+\-%]+\s)*((\d+\s)[+\-%]+)+"""))) return -1
-    val result = Regex("""(\d+\s\+)""").findAll(jumps.replace(Regex("""[\-%]"""), ""))
-    return result.map { it.value.filter { it2 -> (it2 in '0'..'9') } }.map { it.toInt() }.max() ?: -1
+    val result = Regex("""(\d+)""").findAll(jumps.replace(Regex("""\d+\s(-|%)+"""), ""))
+    return result.map { it.value.toInt() }.max() ?: -1
 }
 
 /**
@@ -221,7 +221,7 @@ fun mostExpensive(description: String): String {
     var maxName = ""
     for (str in description.split("; ")) {
         val current = str.split(" ")
-        if (current[1].toDouble() > maxCount) {
+        if (current[1].toDouble() >= maxCount) {
             maxCount = current[1].toDouble()
             maxName = current[0]
         }
