@@ -2,7 +2,7 @@
 
 package lesson5.task1
 
-import java.lang.Math.sqrt
+import kotlin.math.log2
 
 /**
  * Пример
@@ -301,12 +301,10 @@ fun hasAnagrams(words: List<String>): Boolean {
  */
 fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<String>> {
     val result = mutableMapOf<String, MutableSet<String>>()
-    var maxSize = 0
     for ((name, hands) in friends) {
-        if (hands.size > maxSize) maxSize = hands.size
         result[name] = hands.toMutableSet()
     }
-    for (i in 0 until maxSize) {
+    for (i in 0 until (log2(friends.size.toDouble()) + 1).toInt()) {
         for ((name, hands) in friends) {
             for (person in hands) {
                 if (person !in result) result[person] = mutableSetOf()
