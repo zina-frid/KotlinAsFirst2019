@@ -145,34 +145,34 @@ fun centerFile(inputName: String, outputName: String) {
  */
 fun alignFileByWidth(inputName: String, outputName: String) {
     var maxLength = 0
-    val outputStream = File(outputName).bufferedWriter()
-    for (line in File(inputName).readLines()) {
-        val currentLength = (Regex("""\s+""").replace(line, " ")).trim().length
-        if (currentLength > maxLength) maxLength = currentLength
-    }
-    for (line in File(inputName).readLines()) {
-        val currentLine = (Regex("""\s+""").replace(line, " ")).trim()
-        val currentWords = currentLine.split(" ")
-        val currentListSize = currentWords.size
-        val result = mutableListOf<String>()
-        if (currentListSize > 1) {
-            val betweenWords = (maxLength - currentLine.length) / (currentListSize - 1) + 1
-            val restSpaces = (maxLength - currentLine.length) % (currentListSize - 1)
-            result.add(currentWords[0])
-            for (i in 1 until currentListSize) {
-                if (i <= restSpaces) {
-                    result.add(" ".repeat(betweenWords + 1))
-                    result.add(currentWords[i])
-                } else {
-                    result.add(" ".repeat(betweenWords))
-                    result.add(currentWords[i])
+    val file = mutableListOf<String>()
+    File(outputName).bufferedWriter().use {
+        for (line in File(inputName).readLines()) {
+            val currentLine = (Regex("""\s+""").replace(line, " ")).trim()
+            file.add(currentLine)
+            val currentLength = currentLine.length
+            if (currentLength > maxLength) maxLength = currentLength
+        }
+        for (line in file) {
+            val currentWords = line.split(" ")
+            val currentListSize = currentWords.size
+            if (currentListSize > 1) {
+                val betweenWords = (maxLength - line.length) / (currentListSize - 1) + 1
+                val restSpaces = (maxLength - line.length) % (currentListSize - 1)
+                it.write(currentWords[0])
+                for (i in 1 until currentListSize) {
+                    if (i <= restSpaces) {
+                        it.write(" ".repeat(betweenWords + 1))
+                        it.write(currentWords[i])
+                    } else {
+                        it.write(" ".repeat(betweenWords))
+                        it.write(currentWords[i])
+                    }
                 }
-            }
-        } else result.add(currentWords[0])
-        outputStream.write(result.joinToString(separator = ""))
-        outputStream.newLine()
+            } else it.write(currentWords[0])
+            it.newLine()
+        }
     }
-    outputStream.close()
 }
 
 /**

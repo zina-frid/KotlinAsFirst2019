@@ -72,6 +72,10 @@ Basic, Ruby, Swift.
             mapOf("--" to 4, "ее" to 2, "животное" to 2, "." to 2),
             countSubstrings("input/substrings_in2.txt", listOf("--", "ее", "животное", "."))
         )
+        assertEquals(
+            mapOf("--" to 4, "ее" to 2, "животное" to 2, "." to 2, "вб" to 2),
+            countSubstrings("input/substrings_in2.txt", listOf("--", "ее", "животное", ".", "вб", "вб"))
+        )
     }
 
     @Test
@@ -80,7 +84,8 @@ Basic, Ruby, Swift.
         sibilants("input/sibilants_in1.txt", "temp.txt")
         assertFileContent(
             "temp.txt",
-            """/**
+            """юа,
+/**
  * Простая
  *
  * В русском языке, как правило, после букв Ж, Ч, Ш, Щ пишется И, А, У, а не Ы, Я, Ю.
