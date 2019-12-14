@@ -158,7 +158,7 @@ fun bestLongJump(jumps: String): Int {
  */
 fun bestHighJump(jumps: String): Int {
     if (!jumps.matches(Regex("""((\d+\s)[+\-%]+\s)*((\d+\s)[+\-%]+)+"""))) return -1
-    val result = Regex("""(\d+)""").findAll(jumps.replace(Regex("""\d+\s(-|%)+"""), ""))
+    val result = Regex("""\d+(?=\s\+)""").findAll(jumps.replace(Regex("""[\-%]"""), ""))
     return result.map { it.value.toInt() }.max() ?: -1
 }
 
