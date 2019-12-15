@@ -212,7 +212,15 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
  * (построить окружность по трём точкам, или
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
-fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = TODO()
+fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
+    val ab = bisectorByPoints(a, b)
+    val bc = bisectorByPoints(b, c)
+    val x = (bc.b * cos(ab.angle) - ab.b * cos(bc.angle)) / sin(ab.angle - bc.angle)
+    val y = if (ab.angle != PI / 2) (x * sin(ab.angle) + ab.b) / cos(ab.angle)
+    else (x * sin(bc.angle) + bc.b) / cos(bc.angle)
+    val center = Point(x, y)
+    return Circle(center, center.distance(a))
+}
 
 /**
  * Очень сложная
@@ -225,5 +233,15 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle = TODO()
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
-fun minContainingCircle(vararg points: Point): Circle = TODO()
+fun minContainingCircle(vararg points: Point): Circle {
+    if (points.isEmpty()) throw IllegalArgumentException()
+    if (points.size == 1) return Circle(points[0], 0.0)
+    val diam = diameter(*points)
+    val a = diam.begin
+    val b = diam.end
+    val pointsWithoutAB = points.filter { it != a && it != b}
+    val c = pointsWithoutAB.maxBy { it.distance(b) + it.distance(a) }
+    return if (sqr(a.distance(b)) + sqr(a.distance(c!!)) > sqr(b.distance(c))) circleByThreePoints(a, b, c)
+    else circleByDiameter(diam)
+}
 
