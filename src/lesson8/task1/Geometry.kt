@@ -152,8 +152,7 @@ class Line private constructor(val b: Double, val angle: Double) {
      */
     fun crossPoint(other: Line): Point {
         val x = (other.b * cos(angle) - b * cos(other.angle)) / sin(angle - other.angle)
-        val y = if (angle != PI / 2) (x * sin(angle) + b) / cos(angle)
-        else (x * sin(other.angle) + other.b) / cos(other.angle)
+        val y = (x * sin(other.angle) + other.b) / cos(other.angle)
         return Point(x, y)
     }
 
@@ -215,10 +214,7 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> = TODO()
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
     val ab = bisectorByPoints(a, b)
     val bc = bisectorByPoints(b, c)
-    val x = (bc.b * cos(ab.angle) - ab.b * cos(bc.angle)) / sin(ab.angle - bc.angle)
-    val y = if (ab.angle != PI / 2) (x * sin(ab.angle) + ab.b) / cos(ab.angle)
-    else (x * sin(bc.angle) + bc.b) / cos(bc.angle)
-    val center = Point(x, y)
+    val center = ab.crossPoint(bc)
     return Circle(center, center.distance(a))
 }
 
@@ -240,9 +236,9 @@ fun minContainingCircle(vararg points: Point): Circle {
     if (points.size == 2) return circleByDiameter(diam)
     val a = diam.begin
     val b = diam.end
-    val pointsWithoutAB = points.filter { it != a && it != b}
-    val c = pointsWithoutAB.maxBy { it.distance(b) + it.distance(a) }
+    val pointsWithoutAB = points.filter { it != a && it != b }
+    val middle = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
+    val c = pointsWithoutAB.maxBy { it.distance(middle) }
     return if (sqr(a.distance(b)) + sqr(a.distance(c!!)) > sqr(b.distance(c))) circleByThreePoints(a, b, c)
     else circleByDiameter(diam)
 }
-
