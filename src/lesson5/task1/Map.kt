@@ -2,7 +2,7 @@
 
 package lesson5.task1
 
-import kotlin.math.log2
+import java.util.Collections.addAll
 
 /**
  * Пример
@@ -304,13 +304,20 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
     for ((name, hands) in friends) {
         result[name] = hands.toMutableSet()
     }
-    for (i in 0 until (log2(friends.size.toDouble()) + 1).toInt()) {
+    //Я не очень разобралась с addAll, но попробовала сделать что-то похожее
+    var size: Int
+    var check = true
+    while (check) {
+        check = false
         for ((name, hands) in friends) {
+            size = result[name]!!.size
             for (person in hands) {
                 if (person !in result) result[person] = mutableSetOf()
                 else result[name]!!.addAll(result[person]!!)
             }
+            if (result[name]!!.size > size) check = true
         }
+
     }
     for ((name, hands) in result) {
         hands.remove(name)
