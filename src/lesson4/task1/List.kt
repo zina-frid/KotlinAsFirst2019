@@ -195,12 +195,16 @@ fun accumulate(list: MutableList<Int>): MutableList<Int> {
 fun factorize(n: Int): List<Int> {
     val result = mutableListOf<Int>()
     var insteadN = n
-    var div = 2
+    while (insteadN % 2 == 0){
+        result.add(2)
+        insteadN /= 2
+    }
+    var div = 3
     while (insteadN > 1) {
         if (insteadN % div == 0) {
             result.add(div)
             insteadN /= div
-        } else div += 1
+        } else div += 2
     }
     return result
 }

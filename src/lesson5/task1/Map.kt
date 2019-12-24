@@ -305,17 +305,17 @@ fun propagateHandshakes(friends: Map<String, Set<String>>): Map<String, Set<Stri
         result[name] = hands.toMutableSet()
     }
     //Я не очень разобралась с addAll, но попробовала сделать что-то похожее
-    var size: Int
     var check = true
     while (check) {
         check = false
         for ((name, hands) in friends) {
-            size = result[name]!!.size
+            val resName = result[name]!!
+            val size = resName.size
             for (person in hands) {
                 if (person !in result) result[person] = mutableSetOf()
-                else result[name]!!.addAll(result[person]!!)
+                else resName.addAll(result[person]!!)
             }
-            if (result[name]!!.size > size) check = true
+            if (resName.size > size) check = true
         }
 
     }
