@@ -229,16 +229,4 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
-fun minContainingCircle(vararg points: Point): Circle {
-    if (points.isEmpty()) throw IllegalArgumentException()
-    if (points.size == 1) return Circle(points[0], 0.0)
-    val diam = diameter(*points)
-    if (points.size == 2) return circleByDiameter(diam)
-    val a = diam.begin
-    val b = diam.end
-    val pointsWithoutAB = points.filter { it != a && it != b }
-    val middle = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
-    val c = pointsWithoutAB.maxBy { it.distance(middle) }
-    return if (sqr(a.distance(b)) + sqr(a.distance(c!!)) > sqr(b.distance(c))) circleByThreePoints(a, b, c)
-    else circleByDiameter(diam)
-}
+fun minContainingCircle(vararg points: Point): Circle = TODO()
